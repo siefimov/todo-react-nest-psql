@@ -32,8 +32,16 @@ export class TodosService {
   }
 
   async update(id: string, updateTaskDto: UpdateTodoDto): Promise<Todo> {
-    await this.todosRepository.update(id, updateTaskDto);
-    return this.findOne(id);
+    const todo = await this.todosRepository.preload({
+      id,
+      ...updateTaskDto,
+    });
+
+    if (!todo) {
+      throw new NotFoundException(`Todo with ID ${id} not found`);
+    }
+
+    return this.todosRepository.save(todo);
   }
 
   async remove(id: string): Promise<void> {
