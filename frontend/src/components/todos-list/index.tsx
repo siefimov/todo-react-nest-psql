@@ -1,4 +1,5 @@
-import { useDeleteTodo } from '../../api/todos/use-delete-todo';
+import { useDeleteTodo, useEditTodo } from '../../api/todos';
+import { TODO_STATUSES } from '../../constants';
 import type { Todo } from '../../types';
 import { DeleteIcon } from '../icons';
 
@@ -8,9 +9,20 @@ type Props = {
 
 export const TodoList: React.FC<Props> = ({ todos }) => {
   const deleteTodoMutation = useDeleteTodo();
+  const editTodoMutation = useEditTodo();
 
   const hadnleDeleteTodo = async (id: string) => {
     deleteTodoMutation.mutateAsync(id);
+  };
+
+  const handleToggleStatus = (todo: Todo) => {
+    editTodoMutation.mutate({
+      ...todo,
+      status:
+        todo.status === TODO_STATUSES.ACTIVE
+          ? TODO_STATUSES.DONE
+          : TODO_STATUSES.ACTIVE,
+    });
   };
 
   return (
@@ -18,6 +30,11 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
       {todos &&
         todos.map((todo: Todo) => (
           <li>
+            <input
+              type="checkbox"
+              checked={todo.status === TODO_STATUSES.DONE}
+              onChange={() => handleToggleStatus(todo)}
+            />
             <span>{todo.title}</span>
             <button onClick={() => hadnleDeleteTodo(todo.id)}>
               <DeleteIcon />
