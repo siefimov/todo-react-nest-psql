@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
+import clsx from 'clsx';
 import { useDeleteTodo, useEditTodo } from '../../api/todos';
 import { TODO_STATUSES } from '../../constants';
 import type { Todo } from '../../types';
 import { DeleteIcon } from '../icons';
+import './todos-list.scss';
 
 type Props = {
   todos: Todo[];
@@ -54,17 +56,26 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
   };
 
   return (
-    <ul>
+    <ul className="todos__list">
       {todos &&
         sortedTodos.map((todo: Todo) => (
-          <li key={todo.id}>
-            <input
-              type="checkbox"
-              checked={todo.status === TODO_STATUSES.DONE}
-              onChange={() => handleToggleStatus(todo)}
-            />
+          <li
+            key={todo.id}
+            className={clsx('todos__item', {
+              edit: editingId === todo.id,
+            })}
+          >
+            <label className="custom-checkbox">
+              <input
+                type="checkbox"
+                checked={todo.status === TODO_STATUSES.DONE}
+                onChange={() => handleToggleStatus(todo)}
+              />
+              <span className="checkmark"></span>
+            </label>
             {editingId === todo.id ? (
               <input
+                className={clsx('todos__todo-title')}
                 type="text"
                 value={editingTitle}
                 onChange={handleEditChange}
@@ -77,13 +88,19 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
               />
             ) : (
               <span
+                className={clsx('todos__todo-title', {
+                  checked: todo.status === TODO_STATUSES.DONE,
+                })}
                 onClick={() => handleEditClick(todo)}
                 style={{ cursor: 'pointer' }}
               >
                 {todo.title}
               </span>
             )}
-            <button onClick={() => hadnleDeleteTodo(todo.id)}>
+            <button
+              className="todos__button-delete"
+              onClick={() => hadnleDeleteTodo(todo.id)}
+            >
               <DeleteIcon />
             </button>
           </li>

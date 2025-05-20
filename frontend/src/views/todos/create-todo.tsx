@@ -12,17 +12,20 @@ export const CreateTodo: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="todos__new">
       <input
+        className="todos__new-input"
         type="text"
-        placeholder="+ new todo"
+        placeholder="add new todo"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleCreateTodo();
         }}
       />
-      <button onClick={handleCreateTodo}>+ New</button>
-    </>
+      <button className="todos__new-button" onClick={handleCreateTodo}>
+        + New
+      </button>
+    </div>
   );
 };

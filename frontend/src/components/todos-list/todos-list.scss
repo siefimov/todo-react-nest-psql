@@ -1,0 +1,99 @@
+@use '../../styles/vars.scss' as *;
+.todos {
+  &__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid $color-grey-medium;
+    padding-block: 10px;
+
+    &.edit,
+    &.edit:hover {
+      background-color: #fff;
+    }
+
+    &:hover {
+      background-color: $color-grey-light-2;
+    }
+  }
+
+  &__todo-title {
+    flex: 1 0 0;
+    padding-left: 20px;
+    transition: color 0.2s ease-in-out, text-decoration-color 0.2s ease-in-out;
+
+    &.checked {
+      text-decoration: line-through;
+      color: $color-grey-medium;
+      text-decoration-color: $color-grey-medium;
+    }
+  }
+
+  &__button-delete {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & svg {
+      width: 20px;
+      height: 20px;
+
+      & path {
+        fill: $color-grey-medium;
+        transition: fill 0.2s ease-in-out;
+      }
+    }
+
+    &:hover > svg path {
+      fill: red;
+    }
+  }
+}
+
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  input[type='checkbox'] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+  }
+  input:checked + .checkmark {
+    background: #2196f3;
+    border-color: #2196f3;
+  }
+  .checkmark:after {
+    content: '';
+    position: absolute;
+    display: none;
+  }
+  input:checked + .checkmark:after {
+    display: block;
+  }
+  .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+}
