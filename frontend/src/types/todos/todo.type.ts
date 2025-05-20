@@ -1,9 +1,4 @@
-export const TODO_STATUS = {
-  ACTIVE: 'active',
-  DONE: 'done',
-} as const;
-
-export type TodoStatus = (typeof TODO_STATUS)[keyof typeof TODO_STATUS];
+import type { TodoStatus } from './todo-status.type';
 
 export type Todo = {
   id: string;
