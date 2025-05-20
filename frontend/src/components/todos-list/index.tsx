@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDeleteTodo, useEditTodo } from '../../api/todos';
 import { TODO_STATUSES } from '../../constants';
 import type { Todo } from '../../types';
@@ -13,7 +13,15 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
   const [editingTitle, setEditingTitle] = useState<string>('');
   const deleteTodoMutation = useDeleteTodo();
   const editTodoMutation = useEditTodo();
-  console.log(editingTitle);
+
+  const sortedTodos = useMemo(() => {
+    return todos
+      .slice()
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      );
+  }, [todos]);
 
   const hadnleDeleteTodo = async (id: string) => {
     deleteTodoMutation.mutateAsync(id);
@@ -48,7 +56,7 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
   return (
     <ul>
       {todos &&
-        todos.map((todo: Todo) => (
+        sortedTodos.map((todo: Todo) => (
           <li key={todo.id}>
             <input
               type="checkbox"
