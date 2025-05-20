@@ -1,16 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
 import type { Todo } from '../../types';
 import { http } from '../http';
 import { todoQueryKeys } from './todo-query-keys';
 
 export const useEditTodo = () => {
-  //   const { id } = useParams();
   const queryClient = useQueryClient();
-
-  //   if (!id) {
-  //     throw new Error('No todo ID found in route parameters.');
-  //   }
 
   const editTodoFn = async (updatedTodo: Todo) => {
     const response = await http.put<Todo>(
