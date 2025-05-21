@@ -1,3 +1,4 @@
+import React from 'react';
 import { TODO_FILTERS } from '../../constants';
 import type { Todo_Filter } from '../../types';
 
