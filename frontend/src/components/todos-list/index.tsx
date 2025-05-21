@@ -17,7 +17,6 @@ export const TodoList: React.FC<Props> = ({ todos, filter }) => {
   const deleteTodoMutation = useDeleteTodo();
   const editTodoMutation = useEditTodo();
 
-  // Фільтрація переноситься у вищий компонент
   const filteredTodos = useMemo(() => {
     if (!filter) return todos;
     if (filter === 'active')

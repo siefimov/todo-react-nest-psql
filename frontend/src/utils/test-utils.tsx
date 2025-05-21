@@ -23,6 +23,5 @@ const customRender = (
   );
 };
 
-// Перевизначаємо render з @testing-library/react
 export * from '@testing-library/react';
 export { customRender as render };
