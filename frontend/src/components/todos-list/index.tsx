@@ -1,31 +1,30 @@
 import { useMemo, useState } from 'react';
 import clsx from 'clsx';
-import { useDeleteTodo, useEditTodo } from '../../api/todos';
-import { TODO_FILTERS, TODO_STATUSES } from '../../constants';
-import type { Todo, Todo_Filter } from '../../types';
+import { useDeleteTodo, useEditTodo } from '../../api';
+import { TODO_STATUSES } from '../../constants';
+import type { Todo } from '../../types';
 import { DeleteIcon } from '../icons';
 import './todos-list.scss';
 
 type Props = {
   todos: Todo[];
+  filter?: string;
 };
 
-export const TodoList: React.FC<Props> = ({ todos }) => {
+export const TodoList: React.FC<Props> = ({ todos, filter }) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState<string>('');
-  const [filter, setFilter] = useState<Todo_Filter>(TODO_FILTERS.ALL);
   const deleteTodoMutation = useDeleteTodo();
   const editTodoMutation = useEditTodo();
 
+  // Фільтрація переноситься у вищий компонент
   const filteredTodos = useMemo(() => {
-    switch (filter) {
-      case TODO_FILTERS.ACTIVE:
-        return todos.filter((todo) => todo.status === TODO_STATUSES.ACTIVE);
-      case TODO_FILTERS.DONE:
-        return todos.filter((todo) => todo.status === TODO_STATUSES.DONE);
-      default:
-        return todos;
-    }
+    if (!filter) return todos;
+    if (filter === 'active')
+      return todos.filter((todo) => todo.status === TODO_STATUSES.ACTIVE);
+    if (filter === 'done')
+      return todos.filter((todo) => todo.status === TODO_STATUSES.DONE);
+    return todos;
   }, [todos, filter]);
 
   const sortedTodos = useMemo(() => {
@@ -68,80 +67,65 @@ export const TodoList: React.FC<Props> = ({ todos }) => {
   };
 
   return (
-    <>
-      <div className="todos__filters">
-        <label htmlFor="todos-filter">Filter:</label>
-        <select
-          id="todos-filter"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as Todo_Filter)}
-        >
-          <option value={TODO_FILTERS.ALL}>All</option>
-          <option value={TODO_FILTERS.ACTIVE}>Active</option>
-          <option value={TODO_FILTERS.DONE}>Done</option>
-        </select>
-      </div>
-      <ul className="todos__list">
-        {todos &&
-          sortedTodos.map((todo: Todo) => (
-            <li
-              key={todo.id}
-              className={clsx('todos__item', {
-                edit: editingId === todo.id,
-              })}
-            >
-              <label className="custom-checkbox" aria-label="Toggle status">
-                <input
-                  type="checkbox"
-                  checked={todo.status === TODO_STATUSES.DONE}
-                  onChange={() => handleToggleStatus(todo)}
-                  tabIndex={0}
-                />
-                <span className="checkmark"></span>
-              </label>
-              {editingId === todo.id ? (
-                <input
-                  className={clsx('todos__todo-title')}
-                  type="text"
-                  value={editingTitle}
-                  onChange={handleEditChange}
-                  onBlur={() => handleEditSubmit(todo)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleEditSubmit(todo);
-                    if (e.key === 'Escape') setEditingId(null);
-                  }}
-                  autoFocus
-                  aria-label="Edit todo"
-                />
-              ) : (
-                <span
-                  className={clsx('todos__todo-title', {
-                    checked: todo.status === TODO_STATUSES.DONE,
-                  })}
-                  onClick={() => handleEditClick(todo)}
-                  tabIndex={0}
-                  role="button"
-                  aria-label="Edit todo"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ')
-                      handleEditClick(todo);
-                  }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {todo.title}
-                </span>
-              )}
-              <button
-                className="todos__button-delete"
-                onClick={() => handleDeleteTodo(todo.id)}
-                aria-label="Delete todo"
+    <ul className="todos__list">
+      {todos &&
+        sortedTodos.map((todo: Todo) => (
+          <li
+            key={todo.id}
+            className={clsx('todos__item', {
+              edit: editingId === todo.id,
+            })}
+          >
+            <label className="custom-checkbox" aria-label="Toggle status">
+              <input
+                type="checkbox"
+                checked={todo.status === TODO_STATUSES.DONE}
+                onChange={() => handleToggleStatus(todo)}
                 tabIndex={0}
+              />
+              <span className="checkmark"></span>
+            </label>
+            {editingId === todo.id ? (
+              <input
+                className={clsx('todos__todo-title')}
+                type="text"
+                value={editingTitle}
+                onChange={handleEditChange}
+                onBlur={() => handleEditSubmit(todo)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleEditSubmit(todo);
+                  if (e.key === 'Escape') setEditingId(null);
+                }}
+                autoFocus
+                aria-label="Edit todo"
+              />
+            ) : (
+              <span
+                className={clsx('todos__todo-title', {
+                  checked: todo.status === TODO_STATUSES.DONE,
+                })}
+                onClick={() => handleEditClick(todo)}
+                tabIndex={0}
+                role="button"
+                aria-label="Edit todo"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleEditClick(todo);
+                }}
+                style={{ cursor: 'pointer' }}
               >
-                <DeleteIcon />
-              </button>
-            </li>
-          ))}
-      </ul>
-    </>
+                {todo.title}
+              </span>
+            )}
+            <button
+              className="todos__button-delete"
+              onClick={() => handleDeleteTodo(todo.id)}
+              aria-label="Delete todo"
+              tabIndex={0}
+            >
+              <DeleteIcon />
+            </button>
+          </li>
+        ))}
+    </ul>
   );
 };
