@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { useDeleteTodo, useEditTodo } from '../../api';
+import { useFilteredTodos, useSortedTodos } from '../../hooks';
 import { TODO_STATUSES } from '../../constants';
 import type { Todo } from '../../types';
 import { DeleteIcon } from '../icons';
@@ -11,29 +12,18 @@ type Props = {
   filter?: string;
 };
 
+type EditingState = {
+  id: string | null;
+  title: string;
+};
+
 export const TodoList: React.FC<Props> = ({ todos, filter }) => {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingTitle, setEditingTitle] = useState<string>('');
+  const [editing, setEditing] = useState<EditingState>({ id: null, title: '' });
   const deleteTodoMutation = useDeleteTodo();
   const editTodoMutation = useEditTodo();
 
-  const filteredTodos = useMemo(() => {
-    if (!filter) return todos;
-    if (filter === 'active')
-      return todos.filter((todo) => todo.status === TODO_STATUSES.ACTIVE);
-    if (filter === 'done')
-      return todos.filter((todo) => todo.status === TODO_STATUSES.DONE);
-    return todos;
-  }, [todos, filter]);
-
-  const sortedTodos = useMemo(() => {
-    return filteredTodos
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      );
-  }, [filteredTodos]);
+  const filteredTodos = useFilteredTodos(todos, filter);
+  const sortedTodos = useSortedTodos(filteredTodos);
 
   const handleDeleteTodo = async (id: string) => {
     deleteTodoMutation.mutateAsync(id);
@@ -50,19 +40,18 @@ export const TodoList: React.FC<Props> = ({ todos, filter }) => {
   };
 
   const handleEditClick = (todo: Todo) => {
-    setEditingId(todo.id);
-    setEditingTitle(todo.title);
+    setEditing({ id: todo.id, title: todo.title });
   };
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingTitle(e.target.value);
+    setEditing((prev) => ({ ...prev, title: e.target.value }));
   };
 
   const handleEditSubmit = (todo: Todo) => {
-    if (editingTitle.trim() && editingTitle !== todo.title) {
-      editTodoMutation.mutate({ ...todo, title: editingTitle });
+    if (editing.title.trim() && editing.title !== todo.title) {
+      editTodoMutation.mutate({ ...todo, title: editing.title });
     }
-    setEditingId(null);
+    setEditing({ id: null, title: '' });
   };
 
   return (
@@ -72,7 +61,7 @@ export const TodoList: React.FC<Props> = ({ todos, filter }) => {
           <li
             key={todo.id}
             className={clsx('todos__item', {
-              edit: editingId === todo.id,
+              edit: editing.id === todo.id,
             })}
           >
             <label className="custom-checkbox" aria-label="Toggle status">
@@ -84,16 +73,16 @@ export const TodoList: React.FC<Props> = ({ todos, filter }) => {
               />
               <span className="checkmark"></span>
             </label>
-            {editingId === todo.id ? (
+            {editing.id === todo.id ? (
               <input
                 className={clsx('todos__todo-title')}
                 type="text"
-                value={editingTitle}
+                value={editing.title}
                 onChange={handleEditChange}
                 onBlur={() => handleEditSubmit(todo)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleEditSubmit(todo);
-                  if (e.key === 'Escape') setEditingId(null);
+                  if (e.key === 'Escape') setEditing({ id: null, title: '' });
                 }}
                 autoFocus
                 aria-label="Edit todo"
