@@ -1,4 +1,4 @@
-import { type ComponentPropsWithoutRef } from 'react';
+import React, { type ComponentPropsWithoutRef } from 'react';
 
 export const DeleteIcon: React.FC<ComponentPropsWithoutRef<'svg'>> = (
   props,
