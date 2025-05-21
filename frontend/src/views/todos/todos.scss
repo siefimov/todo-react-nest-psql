@@ -22,6 +22,10 @@
     padding-top: 36px;
     padding-bottom: 28px;
     box-shadow: 0 2px 8px 0 rgba(99, 102, 241, 0.06);
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   &__title {
@@ -33,50 +37,26 @@
     letter-spacing: 0.5px;
   }
 
+  &__filters {
+    position: sticky;
+    top: 187px;
+    z-index: 9;
+    background: $color-bg-light;
+    box-shadow: 0 2px 8px 0 rgba(99, 102, 241, 0.04);
+  }
+
   &__new {
-    display: flex;
-    justify-content: space-between;
-    padding-left: 10px;
-    margin-inline: 32px;
-    border: 1.5px solid $color-border;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 1px 4px 0 rgba(99, 102, 241, 0.04);
+    position: sticky;
+    top: 54px;
+    z-index: 10;
+    background: #fff;
+    box-shadow: 0 2px 8px 0 rgba(99, 102, 241, 0.04);
+    margin-bottom: 8px;
   }
 
   &__chheckbox {
     width: 22px;
     height: 22px;
-  }
-
-  &__new-input {
-    padding: 12px;
-    width: 80%;
-    border-radius: 8px 0 0 8px;
-    border: none;
-    background: transparent;
-
-    &::placeholder {
-      font-size: 13px;
-      font-style: italic;
-      color: $color-text-light;
-    }
-  }
-
-  &__new-button {
-    border: 2px solid $color-primary;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    padding: 7px 18px;
-    color: $color-primary;
-    background-color: transparent;
-    font-weight: 600;
-    transition: background 0.2s, color 0.2s;
-
-    &:hover {
-      background: $color-primary;
-      color: #fff;
-    }
   }
 }
 
@@ -100,6 +80,10 @@
     }
     &__new {
       margin-inline: 8px;
+    }
+    &__filters {
+      left: 0;
+      right: 0;
     }
   }
 }
