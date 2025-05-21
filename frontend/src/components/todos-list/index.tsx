@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { useDeleteTodo, useEditTodo } from '../../api';
+import { useFilteredTodos, useSortedTodos } from '../../hooks';
 import { TODO_STATUSES } from '../../constants';
 import type { Todo } from '../../types';
 import { DeleteIcon } from '../icons';
@@ -17,23 +18,8 @@ export const TodoList: React.FC<Props> = ({ todos, filter }) => {
   const deleteTodoMutation = useDeleteTodo();
   const editTodoMutation = useEditTodo();
 
-  const filteredTodos = useMemo(() => {
-    if (!filter) return todos;
-    if (filter === 'active')
-      return todos.filter((todo) => todo.status === TODO_STATUSES.ACTIVE);
-    if (filter === 'done')
-      return todos.filter((todo) => todo.status === TODO_STATUSES.DONE);
-    return todos;
-  }, [todos, filter]);
-
-  const sortedTodos = useMemo(() => {
-    return filteredTodos
-      .slice()
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-      );
-  }, [filteredTodos]);
+  const filteredTodos = useFilteredTodos(todos, filter);
+  const sortedTodos = useSortedTodos(filteredTodos);
 
   const handleDeleteTodo = async (id: string) => {
     deleteTodoMutation.mutateAsync(id);
