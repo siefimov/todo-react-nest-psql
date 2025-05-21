@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useCreateTodo } from '../../api/todos/use-create-todo';
+import { useCreateTodo } from '../../api/todos';
+import './create-todo.scss';
 
 export const CreateTodo: React.FC = () => {
   const [title, setTitle] = useState('');
