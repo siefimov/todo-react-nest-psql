@@ -12,7 +12,9 @@ export const Todos = () => {
         <h2 className="todos__title">Todo List</h2>
         <CreateTodo />
       </div>
-      <TodoList todos={todos.data ?? []} />
+      {todos.error instanceof Error && <div>{todos.error.message}</div>}
+      {todos.isLoading && <div>Loading...</div>}
+      {todos.isSuccess && <TodoList todos={todos.data ?? []} />}
     </div>
   );
 };
