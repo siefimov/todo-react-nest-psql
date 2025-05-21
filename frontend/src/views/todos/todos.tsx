@@ -8,8 +8,10 @@ export const Todos = () => {
 
   return (
     <div className="todos">
-      <h2 className='todos__title'>Todo List</h2>
-      <CreateTodo />
+      <div className="todos__header">
+        <h2 className="todos__title">Todo List</h2>
+        <CreateTodo />
+      </div>
       <TodoList todos={todos.data ?? []} />
     </div>
   );
